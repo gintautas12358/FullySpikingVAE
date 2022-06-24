@@ -4,6 +4,8 @@ import torchvision.transforms as transforms
 import torch
 import global_v as glv
 
+from .eventDataset import EventDataset
+
 def load_mnist(data_path):
     print("loading MNIST")
     if not os.path.exists(data_path):
@@ -116,4 +118,44 @@ def load_celebA(data_path):
     return trainloader, testloader
 
 
+def load_usb_events(data_path):
+    print("loading usb_events")
+    if not os.path.exists(data_path):
+        os.mkdir(data_path)
+    batch_size = glv.network_config['batch_size']
+    input_size = glv.network_config['input_size']
+    dataset = glv.network_config['dataset']
+    
+    SetRange = transforms.Lambda(lambda X: 2 * X - 1.)
+    transform = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        # transforms.CenterCrop(148),
+        transforms.Resize((input_size,input_size)),
+        transforms.ToTensor(),
+        SetRange
+        ])
+
+    
+    dataset_path = os.path.join(data_path, dataset)
+    data_info_path = os.path.join(dataset_path, "data_info.txt")
+    # events_path = os.path.join(dataset_path, "events")
+    events_path = os.path.join(dataset_path, "cropped_event_imgs")
+
+
+    dataset = EventDataset(data_info_path, events_path, transform=transform)
+    size = len(dataset)
+
+    trainset = torch.utils.data.Subset(dataset, torch.arange(0, size/2))
+    trainloader = torch.utils.data.DataLoader(trainset, 
+                                            batch_size=batch_size, 
+                                            shuffle=True, num_workers=8, pin_memory=False, drop_last=False)
+
+    trainset = torch.utils.data.Subset(dataset, torch.arange(size/2, size))
+    testloader = torch.utils.data.DataLoader(trainset, 
+                                            batch_size=batch_size, 
+                                            shuffle=False, num_workers=8, pin_memory=False, drop_last=False)
+
+    # raise ValueError("stop")
+
+    return trainloader, testloader
 

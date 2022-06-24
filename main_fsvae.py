@@ -63,6 +63,7 @@ def train(network, trainloader, opti, epoch):
         labels = labels.to(init_device, non_blocking=True)
         # direct spike input
         spike_input = real_img.unsqueeze(-1).repeat(1, 1, 1, 1, n_steps) # (N,C,H,W,T)
+        # print("spike shape: ", spike_input.shape)
         x_recon, q_z, p_z, sampled_z = network(spike_input, scheduled=network_config['scheduled']) # sampled_z(B,C,1,1,T)
         
         if network_config['loss_func'] == 'mmd':
@@ -150,7 +151,6 @@ def test(network, testloader, epoch):
             dist_meter.update(losses['Distance_Loss'].detach().cpu().item())
 
             print(f'Test[{epoch}/{max_epoch}] [{batch_idx}/{len(testloader)}] Loss: {loss_meter.avg}, RECONS: {recons_meter.avg}, DISTANCE: {dist_meter.avg}')
-
             if batch_idx == len(testloader)-1:
                 os.makedirs(f'checkpoint/{args.name}/imgs/test/', exist_ok=True)
                 torchvision.utils.save_image((real_img+1)/2, f'checkpoint/{args.name}/imgs/test/epoch{epoch}_input.png')
@@ -158,7 +158,6 @@ def test(network, testloader, epoch):
                 writer.add_images('Test/input_img', (real_img+1)/2, epoch)
                 writer.add_images('Test/recons_img', (x_recon+1)/2, epoch)
                 
-
     logging.info(f"Test [{epoch}] Loss: {loss_meter.avg} ReconsLoss: {recons_meter.avg} DISTANCE: {dist_meter.avg}")
     writer.add_scalar('Test/loss', loss_meter.avg, epoch)
     writer.add_scalar('Test/recons_loss', recons_meter.avg, epoch)
@@ -170,13 +169,11 @@ def test(network, testloader, epoch):
     
     for handle in hook_handles:
         handle.remove()
-
     writer.add_image('Test/mean_sampled_z', mean_sampled_z.unsqueeze(0), epoch)
     mean_q_z = mean_q_z.permute(1,0,2) # # (k,C,T)
     mean_p_z = mean_p_z.permute(1,0,2) # # (k,C,T)
     writer.add_image(f'Test/mean_q_z', mean_q_z.mean(0).unsqueeze(0))
     writer.add_image(f'Test/mean_p_z', mean_p_z.mean(0).unsqueeze(0))
-
     return loss_meter.avg
 
 def sample(network, epoch, batch_size=128):
@@ -216,6 +213,8 @@ def calc_autoencoder_frechet_distance(network, epoch):
         dataset = 'celeba'
     elif glv.network_config['dataset'] == "CIFAR10":
         dataset = 'cifar10'
+    elif glv.network_config['dataset'] == "usb_events":
+        dataset = 'usb_events'
     else:
         raise ValueError()
 
@@ -288,6 +287,10 @@ if __name__ == '__main__':
     elif dataset_name == "CelebA":
         data_path = os.path.expanduser(data_path)
         train_loader, test_loader = load_dataset_snn.load_celebA(data_path)
+
+    elif dataset_name == "usb_events":
+        data_path = os.path.expanduser(data_path)
+        train_loader, test_loader = load_dataset_snn.load_usb_events(data_path)
         
     else:
         raise Exception('Unrecognized dataset name.')
@@ -325,11 +328,16 @@ if __name__ == '__main__':
         if test_loss < best_loss:
             best_loss = test_loss
             torch.save(net.state_dict(), f'checkpoint/{args.name}/best.pth')
+        
+        # sample(net, e, batch_size=128)
+        sample(net, e, batch_size=glv.network_config['batch_size'])
 
-        sample(net, e, batch_size=128)
-        calc_inception_score(net, e)
-        calc_autoencoder_frechet_distance(net, e)
-        calc_clean_fid(net, e)
+        # calc_inception_score(net, e)
+        # calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])
+        # print("#10 2")
+        # calc_autoencoder_frechet_distance(net, e)
+        # print("#10 3")
+        # calc_clean_fid(net, e)
         
     writer.close()
 
