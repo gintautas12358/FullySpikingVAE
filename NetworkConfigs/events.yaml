@@ -2,7 +2,7 @@ Network:
   epochs: 500
   batch_size: 8 #250
   n_steps: 16 # timestep
-  dataset: "usb_events"
+  dataset: "events"
   in_channels: 3
   data_path: "./data"
   lr: 0.0001

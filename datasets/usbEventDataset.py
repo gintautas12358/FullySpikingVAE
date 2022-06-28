@@ -5,7 +5,7 @@ import torch
 from skimage import io
 from PIL import Image
 
-class EventDataset(Dataset):
+class USBEventDataset(Dataset):
     """Face Landmarks dataset."""
 
     def __init__(self, data_info, root_dir, split=None, transform=None):
