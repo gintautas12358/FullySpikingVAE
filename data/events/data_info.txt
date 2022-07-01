@@ -1,2 +1,4 @@
-vga/00000252.png 0
-vga/00000254.png 1
+hdmi/00000008.png 0
+hdmi/00000012.png 1
+vga/00000230.png 2
+vga/00000232.png 3

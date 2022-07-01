@@ -54,6 +54,9 @@ for type in type_dir_list:
         	
         crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
+        max_value = np.max(crop_img)
+        crop_img = cv2.normalize(crop_img,  crop_img, 0, 255, cv2.NORM_MINMAX)
+
         new_img_path = os.path.join(type_save_path, f)
         cv2.imwrite(new_img_path, crop_img)
 
