@@ -6,11 +6,13 @@ from utilities import yield_imgs, delete_on_condition
 
 enable_delete = True
 offset = 5
-save_path = "../cropped_event_imgs"
-
+# save_path = "../cropped_event_imgs"
+save_path = "../grey_cropped_event_imgs"
 
 def is_out_of_bound(img, offset):
-    positions_y, positions_x, channel = np.where(img != 255)
+    # positions_y, positions_x, channel = np.where(img != 255)
+    positions_y, positions_x, channel = np.where(img != 0)
+
     min_position_x = np.min(positions_x)
     max_position_x = np.max(positions_x)
     min_position_y = np.min(positions_y)

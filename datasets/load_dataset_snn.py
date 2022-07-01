@@ -177,7 +177,8 @@ def load_events(data_path):
     dataset_path = os.path.join(data_path, dataset)
     data_info_path = os.path.join(dataset_path, "data_info.txt")
     # events_path = os.path.join(dataset_path, "events")
-    events_path = os.path.join(dataset_path, "cropped_event_imgs")
+    # events_path = os.path.join(dataset_path, "cropped_event_imgs")
+    events_path = os.path.join(dataset_path, "grey_cropped_event_imgs")
 
 
     train_dataset = EventDataset(data_info_path, events_path, split='train', transform=transform)

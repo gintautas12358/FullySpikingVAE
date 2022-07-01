@@ -9,6 +9,7 @@ import torch
 import torchvision
 
 from torch.utils.tensorboard import SummaryWriter
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import global_v as glv
 from network_parser import parse
@@ -56,7 +57,9 @@ def train(network, trainloader, opti, epoch):
     mean_sampled_z = 0
 
     network = network.train()
-    
+
+    batch_count = epoch * len(trainloader)
+
     for batch_idx, (real_img, labels) in enumerate(trainloader):   
         opti.zero_grad()
         real_img = real_img.to(init_device, non_blocking=True)
@@ -86,6 +89,7 @@ def train(network, trainloader, opti, epoch):
         mean_sampled_z = (sampled_z.mean(0).detach().cpu() + batch_idx * mean_sampled_z) / (batch_idx+1) # (C,T)
 
         print(f'Train[{epoch}/{max_epoch}] [{batch_idx}/{len(trainloader)}] Loss: {loss_meter.avg}, RECONS: {recons_meter.avg}, DISTANCE: {dist_meter.avg}')
+        writer.add_scalar('Train/running_loss', loss_meter.avg, batch_count + batch_idx)
 
         if batch_idx == len(trainloader)-1:
             os.makedirs(f'checkpoint/{args.name}/imgs/train/', exist_ok=True)
@@ -291,6 +295,10 @@ if __name__ == '__main__':
     elif dataset_name == "usb_events":
         data_path = os.path.expanduser(data_path)
         train_loader, test_loader = load_dataset_snn.load_usb_events(data_path)
+
+    elif dataset_name == "events":
+        data_path = os.path.expanduser(data_path)
+        train_loader, test_loader = load_dataset_snn.load_events(data_path)
         
     else:
         raise Exception('Unrecognized dataset name.')
@@ -312,9 +320,11 @@ if __name__ == '__main__':
     optimizer = torch.optim.AdamW(net.parameters(), 
                                 lr=glv.network_config['lr'], 
                                 betas=(0.9, 0.999), 
-                                weight_decay=0.001)
+                                weight_decay=glv.network_config['weight_decay'])
     
     best_loss = 1e8
+
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
     for e in range(glv.network_config['epochs']):
         
         write_weight_hist(net, e)
@@ -323,6 +333,7 @@ if __name__ == '__main__':
             logging.info("update p")
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
+        # scheduler.step()
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
@@ -332,12 +343,10 @@ if __name__ == '__main__':
         # sample(net, e, batch_size=128)
         sample(net, e, batch_size=glv.network_config['batch_size'])
 
-        # calc_inception_score(net, e)
-        # calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])
-        # print("#10 2")
-        # calc_autoencoder_frechet_distance(net, e)
-        # print("#10 3")
-        # calc_clean_fid(net, e)
+        calc_inception_score(net, e)
+        calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])
+        calc_autoencoder_frechet_distance(net, e)
+        calc_clean_fid(net, e)
         
     writer.close()
 

@@ -23,8 +23,14 @@ class EventDataset(Dataset):
         self.train_split_size = int(0.8 * self.get_size())
 
     def get_size(self):
-        _, _, files = next(os.walk(self.root_dir))
-        return len(files)
+        # _, _, files = next(os.walk(self.root_dir))
+        # return len(files)
+        size = None
+        with open(self.data_info) as f:
+            content = f.readlines()
+            size = len(content)
+
+        return size
 
     def __len__(self):
         self.size = self.get_size()

@@ -49,7 +49,7 @@ for type in type_dir_list:
 
 
         # for visibility
-        crop_img = np.where(crop_img == 0, 255, crop_img)
+        # crop_img = np.where(crop_img == 0, 255, crop_img)
 
         new_img_path = os.path.join(type_save_path, f)
         cv2.imwrite(new_img_path, crop_img)
