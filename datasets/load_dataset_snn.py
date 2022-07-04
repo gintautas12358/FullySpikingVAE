@@ -178,7 +178,9 @@ def load_events(data_path):
     data_info_path = os.path.join(dataset_path, "data_info.txt")
     # events_path = os.path.join(dataset_path, "events")
     # events_path = os.path.join(dataset_path, "cropped_event_imgs")
-    events_path = os.path.join(dataset_path, "grey_cropped_event_imgs")
+    # events_path = os.path.join(dataset_path, "grey_cropped_event_imgs")
+    events_path = os.path.join(dataset_path, "small_grey_cropped_event_imgs")
+
 
 
     train_dataset = EventDataset(data_info_path, events_path, split='train', transform=transform)
@@ -186,11 +188,11 @@ def load_events(data_path):
 
     trainloader = torch.utils.data.DataLoader(train_dataset, 
                                             batch_size=batch_size, 
-                                            shuffle=True, num_workers=8, pin_memory=False, drop_last=False)
+                                            shuffle=True, num_workers=2, pin_memory=False, drop_last=False)
 
     testloader = torch.utils.data.DataLoader(test_dataset, 
                                             batch_size=batch_size, 
-                                            shuffle=False, num_workers=8, pin_memory=False, drop_last=False)
+                                            shuffle=False, num_workers=2, pin_memory=False, drop_last=False)
 
     return trainloader, testloader
 

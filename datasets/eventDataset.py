@@ -20,7 +20,19 @@ class EventDataset(Dataset):
         self.split = split
         self.transform = transform
 
-        self.train_split_size = int(0.8 * self.get_size())
+        # self.train_split_size = int(0.8 * self.get_size())
+
+        self.info = self.get_info()
+
+
+    def get_info(self):
+        data = []
+        with open(self.data_info) as f:
+            content = f.readlines()
+            data = content[0].split()
+
+        return [int(x) for x in data]
+
 
     def get_size(self):
         # _, _, files = next(os.walk(self.root_dir))
@@ -34,11 +46,11 @@ class EventDataset(Dataset):
 
     def __len__(self):
         self.size = self.get_size()
-
+        
         if self.split == 'train':
-            self.size = self.train_split_size
+            self.size = self.info[0]
         elif self.split == 'test':
-            self.size -= self.train_split_size
+            self.size = self.info[1]
 
         return self.size 
 
@@ -47,9 +59,9 @@ class EventDataset(Dataset):
             idx = idx.tolist()
 
         if self.split == 'train':
-            idx = idx
+            idx += self.info[2]
         elif self.split == 'test':
-            idx += self.train_split_size
+            idx += self.info[3]
 
         # for reading images
         image_name = None
