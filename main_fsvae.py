@@ -331,7 +331,7 @@ if __name__ == '__main__':
     best_loss = 1e8
 
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
-    early_stopping = EarlyStopping()
+    early_stopping = EarlyStopping(20, 0)
 
     for e in range(glv.network_config['epochs']):
         
