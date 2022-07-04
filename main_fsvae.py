@@ -23,6 +23,8 @@ import metrics.inception_score as inception_score
 import metrics.clean_fid as clean_fid
 import metrics.autoencoder_fid as autoencoder_fid
 
+from .datasets.earlyStopping import EarlyStopping
+
 
 max_accuracy = 0
 min_loss = 1000
@@ -299,6 +301,10 @@ if __name__ == '__main__':
     elif dataset_name == "events":
         data_path = os.path.expanduser(data_path)
         train_loader, test_loader = load_dataset_snn.load_events(data_path)
+
+    elif dataset_name == "hole":
+        data_path = os.path.expanduser(data_path)
+        train_loader, test_loader = load_dataset_snn.load_hole(data_path)
         
     else:
         raise Exception('Unrecognized dataset name.')
@@ -325,6 +331,8 @@ if __name__ == '__main__':
     best_loss = 1e8
 
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
+    early_stopping = EarlyStopping()
+
     for e in range(glv.network_config['epochs']):
         
         write_weight_hist(net, e)
@@ -333,7 +341,7 @@ if __name__ == '__main__':
             logging.info("update p")
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
-        # scheduler.step()
+        scheduler.step()
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
@@ -342,6 +350,12 @@ if __name__ == '__main__':
         
         # sample(net, e, batch_size=128)
         sample(net, e, batch_size=glv.network_config['batch_size'])
+
+        # early stopping
+        early_stopping(train_loss, test_loss)
+        if early_stopping.early_stop:
+            print("We are at epoch:", e)
+            break
 
         # calc_inception_score(net, e)
         # calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])

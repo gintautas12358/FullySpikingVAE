@@ -1,6 +1,6 @@
 Network:
   epochs: 150
-  batch_size: 250
+  batch_size: 64 #250
   n_steps: 16 # timestep
   dataset: "CelebA"
   in_channels: 3
