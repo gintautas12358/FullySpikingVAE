@@ -23,7 +23,7 @@ import metrics.inception_score as inception_score
 import metrics.clean_fid as clean_fid
 import metrics.autoencoder_fid as autoencoder_fid
 
-from .datasets.earlyStopping import EarlyStopping
+from datasets.earlyStopping import EarlyStopping
 
 
 max_accuracy = 0
@@ -341,7 +341,7 @@ if __name__ == '__main__':
             logging.info("update p")
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
-        scheduler.step()
+        scheduler.step(train_loss)
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
