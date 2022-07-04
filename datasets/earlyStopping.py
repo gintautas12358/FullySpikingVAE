@@ -15,7 +15,7 @@ class EarlyStopping():
     #             self.early_stop = True
 
     def __call__(self, train_loss):
-        if (self.old_loss - train_loss) > self.min_delta:
+        if (train_loss - self.old_loss ) > self.min_delta:
             self.counter +=1
             if self.counter >= self.tolerance:  
                 self.early_stop = True
