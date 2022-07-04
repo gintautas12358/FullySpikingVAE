@@ -19,4 +19,7 @@ class EarlyStopping():
             self.counter +=1
             if self.counter >= self.tolerance:  
                 self.early_stop = True
-        self.old_loss = train_loss
+
+        if train_loss < self.old_loss:
+            self.old_loss = train_loss
+            self.counter = 0
