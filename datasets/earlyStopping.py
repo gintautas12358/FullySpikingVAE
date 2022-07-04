@@ -22,4 +22,4 @@ class EarlyStopping():
 
         if train_loss < self.old_loss:
             self.old_loss = train_loss
-            self.counter = 0
+            self.counter = 0 
