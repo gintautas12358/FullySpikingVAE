@@ -1,8 +1,8 @@
 Network:
   epochs: 300
-  batch_size: 250 #250
+  batch_size: 65 #250
   n_steps: 16 # timestep
-  dataset: "events"
+  dataset: "hole"
   in_channels: 1
   data_path: "./data"
   lr: 0.1

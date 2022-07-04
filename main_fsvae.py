@@ -352,7 +352,7 @@ if __name__ == '__main__':
         sample(net, e, batch_size=glv.network_config['batch_size'])
 
         # early stopping
-        early_stopping(train_loss, test_loss)
+        early_stopping(train_loss)
         if early_stopping.early_stop:
             print("We are at epoch:", e)
             break
