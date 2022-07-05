@@ -14,12 +14,13 @@ class EarlyStopping():
     #         if self.counter >= self.tolerance:  
     #             self.early_stop = True
 
-    def __call__(self, train_loss):
-        if (train_loss - self.old_loss ) > self.min_delta:
+    def __call__(self, test_loss):
+        if (test_loss - self.old_loss ) > self.min_delta:
             self.counter +=1
+            print("counter", self.counter)
             if self.counter >= self.tolerance:  
                 self.early_stop = True
 
-        if train_loss < self.old_loss:
-            self.old_loss = train_loss
+        if test_loss < self.old_loss:
+            self.old_loss = test_loss
             self.counter = 0 

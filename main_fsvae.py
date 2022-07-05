@@ -331,7 +331,8 @@ if __name__ == '__main__':
     best_loss = 1e8
 
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
-    early_stopping = EarlyStopping(20, 0)
+    # early_stopping = EarlyStopping(tolerance=glv.network_config['patience'], min_delta=0)
+    early_stopping = EarlyStopping(tolerance=100, min_delta=0)
 
     for e in range(glv.network_config['epochs']):
         
@@ -352,7 +353,7 @@ if __name__ == '__main__':
         sample(net, e, batch_size=glv.network_config['batch_size'])
 
         # early stopping
-        early_stopping(train_loss)
+        early_stopping(test_loss)
         if early_stopping.early_stop:
             print("We are at epoch:", e)
             break
