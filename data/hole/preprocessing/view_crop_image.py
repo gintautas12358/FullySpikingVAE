@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-file_path = "../original_event_imgs/usb/00000067.png"
+file_path = "../original_event_imgs/hole/00000067.png"
 img = cv2.imread(file_path)
 
 size = 64
@@ -23,7 +23,13 @@ print(min_position_x, max_position_x, min_position_y, max_position_y)
 
 crop_img = img[mid_y-half_size:mid_y+half_size, mid_x-half_size:mid_x+half_size]
 # crop_img = img
+crop_img = np.where(crop_img == 50, 255, crop_img)
+crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
-crop_img = np.where(crop_img == 0, 255, crop_img)
+max_value = np.max(crop_img)
+crop_img = cv2.normalize(crop_img,  crop_img, 0, 255, cv2.NORM_MINMAX)
+crop_img = np.where(crop_img == 0, 127, crop_img)
+crop_img = np.where(crop_img == 129, 0, crop_img)
+
 cv2.imshow("cropped", crop_img)
 cv2.waitKey(0)

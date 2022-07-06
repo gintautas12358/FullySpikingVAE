@@ -92,6 +92,8 @@ def train(network, trainloader, opti, epoch):
 
         print(f'Train[{epoch}/{max_epoch}] [{batch_idx}/{len(trainloader)}] Loss: {loss_meter.avg}, RECONS: {recons_meter.avg}, DISTANCE: {dist_meter.avg}')
         writer.add_scalar('Train/running_loss', loss_meter.avg, batch_count + batch_idx)
+        writer.add_images('Train/running_input_img', (real_img+1)/2, batch_count + batch_idx)
+        writer.add_images('Train/running_recons_img', (x_recon+1)/2, batch_count + batch_idx)
 
         if batch_idx == len(trainloader)-1:
             os.makedirs(f'checkpoint/{args.name}/imgs/train/', exist_ok=True)
@@ -332,7 +334,7 @@ if __name__ == '__main__':
 
     scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
     # early_stopping = EarlyStopping(tolerance=glv.network_config['patience'], min_delta=0)
-    early_stopping = EarlyStopping(tolerance=100, min_delta=0)
+    # early_stopping = EarlyStopping(tolerance=100, min_delta=0)
 
     for e in range(glv.network_config['epochs']):
         
@@ -342,7 +344,7 @@ if __name__ == '__main__':
             logging.info("update p")
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
-        scheduler.step(train_loss)
+        # scheduler.step(train_loss)
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
@@ -353,10 +355,10 @@ if __name__ == '__main__':
         sample(net, e, batch_size=glv.network_config['batch_size'])
 
         # early stopping
-        early_stopping(test_loss)
-        if early_stopping.early_stop:
-            print("We are at epoch:", e)
-            break
+        # early_stopping(test_loss)
+        # if early_stopping.early_stop:
+        #     print("We are at epoch:", e)
+        #     break
 
         # calc_inception_score(net, e)
         # calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])
