@@ -51,7 +51,7 @@ for type_folder in type_list:
     path_folder = os.path.join(path, type_folder)
 
     file_list = os.listdir(path_folder)
-    file_list.sort()
+    # file_list.sort()
 
     for i in range(train_sizes[type_folder]):
         file = file_list[i]
