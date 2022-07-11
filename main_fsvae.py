@@ -316,6 +316,8 @@ if __name__ == '__main__':
         net = fsvae.FSVAE()
     elif network_config['model'] == 'FSVAE_large':
         net = fsvae.FSVAELarge()
+    elif network_config['model'] == 'FSVAE_large2':
+        net = fsvae.FSVAELarge2()
     else:
         raise Exception('not defined model')
 
