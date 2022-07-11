@@ -5,8 +5,9 @@ from pathlib import Path
 from utilities import yield_imgs, delete_on_condition
 
 enable_delete = True
-threshold = 200
+threshold = 600
 # save_path = "../cropped_event_imgs"
+# save_path = "../size_cropped_event_imgs"
 save_path = "../grey_cropped_event_imgs"
 
 type_dir_list = os.listdir(save_path)

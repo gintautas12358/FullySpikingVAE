@@ -6,7 +6,7 @@ from pathlib import Path
 save_path = "../grey_cropped_event_imgs"
 path = "../original_event_imgs"
 
-size = 64
+size = 100
 
 
 def center_crop(img, size):
@@ -42,6 +42,7 @@ for type in type_dir_list:
 
     for f in dir_list:
         file_path = os.path.join(type_path, f)
+        # print(file_path)
         img = cv2.imread(file_path)
 
         # crop_img = img[y:y+size, x:x+size]
@@ -50,7 +51,8 @@ for type in type_dir_list:
 
         # for visibility
         crop_img = np.where(crop_img == 50, 255, crop_img)
-
+        if crop_img[0].size == 0 or crop_img[1].size == 0:
+            continue
         	
         crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 

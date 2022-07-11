@@ -5,9 +5,10 @@ from pathlib import Path
 from utilities import yield_imgs, delete_on_condition
 
 enable_delete = True
-offset = 0
+offset = 3
 # save_path = "../cropped_event_imgs"
 save_path = "../grey_cropped_event_imgs"
+
 
 def is_out_of_bound(img, offset):
     # positions_y, positions_x, channel = np.where(img != 255)
@@ -22,7 +23,7 @@ def is_out_of_bound(img, offset):
 
     is_out = False
     for m in mm:
-        is_out |= 0 >= m - offset or 64 <= m + offset
+        is_out |= 0 >= m - offset or 100 <= m + offset
 
     if is_out:
         return True
