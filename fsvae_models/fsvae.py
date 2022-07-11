@@ -256,3 +256,93 @@ class FSVAELarge(FSVAE):
         self.membrane_output_layer = MembraneOutputLayer()
 
         self.psp = PSP()
+
+
+class FSVAELarge2(FSVAE):
+    def __init__(self):
+        super(FSVAE, self).__init__()
+        in_channels = glv.network_config['in_channels']
+        latent_dim = glv.network_config['latent_dim']
+        self.latent_dim = latent_dim
+        self.n_steps = glv.network_config['n_steps']
+
+        self.k = glv.network_config['k']
+
+        hidden_dims = [32, 64, 128, 256, 512, 1024, 2048]
+        self.hidden_dims = hidden_dims.copy()
+
+        # Build Encoder
+        modules = []
+        for h_dim in hidden_dims:
+            modules.append(
+                tdConv(in_channels,
+                        out_channels=h_dim,
+                        kernel_size=3, 
+                        stride=2, 
+                        padding=1,
+                        bias=True,
+                        bn=tdBatchNorm(h_dim),
+                        spike=LIFSpike())
+            )
+            in_channels = h_dim
+        
+        self.encoder = nn.Sequential(*modules)
+        self.before_latent_layer = tdLinear(hidden_dims[-1]*4,
+                                            latent_dim,
+                                            bias=True,
+                                            bn=tdBatchNorm(latent_dim),
+                                            spike=LIFSpike())
+
+        self.prior = PriorBernoulliSTBP(self.k)
+        
+        self.posterior = PosteriorBernoulliSTBP(self.k)
+        
+        # Build Decoder
+        modules = []
+        
+        self.decoder_input = tdLinear(latent_dim, 
+                                        hidden_dims[-1] * 4, 
+                                        bias=True,
+                                        bn=tdBatchNorm(hidden_dims[-1] * 4),
+                                        spike=LIFSpike())
+        
+        hidden_dims.reverse()
+
+        for i in range(len(hidden_dims) - 1):
+            modules.append(
+                    tdConvTranspose(hidden_dims[i],
+                                    hidden_dims[i + 1],
+                                    kernel_size=3,
+                                    stride = 2,
+                                    padding=1,
+                                    output_padding=1,
+                                    bias=True,
+                                    bn=tdBatchNorm(hidden_dims[i+1]),
+                                    spike=LIFSpike())
+            )
+        self.decoder = nn.Sequential(*modules)
+
+        self.final_layer = nn.Sequential(
+                            tdConvTranspose(hidden_dims[-1],
+                                            hidden_dims[-1],
+                                            kernel_size=3,
+                                            stride=2,
+                                            padding=1,
+                                            output_padding=1,
+                                            bias=True,
+                                            bn=tdBatchNorm(hidden_dims[-1]),
+                                            spike=LIFSpike()),
+                            tdConvTranspose(hidden_dims[-1], 
+                                            out_channels=glv.network_config['in_channels'],
+                                            kernel_size=3, 
+                                            padding=1,
+                                            bias=True,
+                                            bn=None,
+                                            spike=None)
+        )
+
+        self.p = 0
+
+        self.membrane_output_layer = MembraneOutputLayer()
+
+        self.psp = PSP()
