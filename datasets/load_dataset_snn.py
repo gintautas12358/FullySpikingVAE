@@ -210,6 +210,7 @@ def load_hole(data_path):
         # transforms.RandomHorizontalFlip(),
         # transforms.CenterCrop(148),
         # transforms.Resize((input_size,input_size)),
+        transforms.RandomAffine([-180, 180], [0.5, 0.5], [0.3, 1.1], fill=127),
         transforms.ToTensor(),
         SetRange
         ])
