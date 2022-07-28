@@ -91,7 +91,6 @@ def train(network, trainloader, opti, epoch):
         mean_sampled_z = (sampled_z.mean(0).detach().cpu() + batch_idx * mean_sampled_z) / (batch_idx+1) # (C,T)
 
         print(f'Train[{epoch}/{max_epoch}] [{batch_idx}/{len(trainloader)}] Loss: {loss_meter.avg}, RECONS: {recons_meter.avg}, DISTANCE: {dist_meter.avg}')
-        
         writer.add_scalar('Train/running_learning_rate', opti.param_groups[0]['lr'], batch_count + batch_idx)
         writer.add_scalar('Train/running_loss', loss_meter.avg, batch_count + batch_idx)
         writer.add_images('Train/running_input_img', (real_img+1)/2, batch_count + batch_idx)
@@ -333,10 +332,10 @@ if __name__ == '__main__':
                                 lr=glv.network_config['lr'], 
                                 betas=(0.9, 0.999), 
                                 weight_decay=glv.network_config['weight_decay'])
-    
+
     best_loss = 1e8
 
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=50)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
     # early_stopping = EarlyStopping(tolerance=glv.network_config['patience'], min_delta=0)
     # early_stopping = EarlyStopping(tolerance=100, min_delta=0)
 

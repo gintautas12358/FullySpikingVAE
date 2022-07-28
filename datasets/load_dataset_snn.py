@@ -211,7 +211,7 @@ def load_hole(data_path):
         # transforms.CenterCrop(148),
         # transforms.Resize((input_size,input_size)),
         # transforms.RandomAffine([-180, 180], [0.5, 0.5], [0.3, 1.1], fill=127),
-        transforms.RandomAffine([-10, 10], [0.1, 0.1], fill=127),
+        # transforms.RandomAffine([-10, 10], [0.1, 0.1], fill=127),
         transforms.ToTensor(),
         SetRange
         ])
@@ -226,10 +226,14 @@ def load_hole(data_path):
 
 
 
-    train_dataset = EventDataset(data_info_path, events_path, split='train', transform=transform)
+    # train_dataset = EventDataset(data_info_path, events_path, split='train', transform=transform)
     test_dataset = EventDataset(data_info_path, events_path, split='test', transform=transform)
 
-    trainloader = torch.utils.data.DataLoader(train_dataset, 
+    # trainloader = torch.utils.data.DataLoader(train_dataset, 
+    #                                         batch_size=batch_size, 
+    #                                         shuffle=True, num_workers=2, pin_memory=False, drop_last=False)
+
+    trainloader = torch.utils.data.DataLoader(test_dataset, 
                                             batch_size=batch_size, 
                                             shuffle=True, num_workers=2, pin_memory=False, drop_last=False)
 
