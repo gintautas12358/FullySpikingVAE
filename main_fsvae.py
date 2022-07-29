@@ -348,7 +348,7 @@ if __name__ == '__main__':
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
 
-        scheduler.step(train_loss)
+        # scheduler.step(train_loss)
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
