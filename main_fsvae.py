@@ -335,7 +335,7 @@ if __name__ == '__main__':
 
     best_loss = 1e8
 
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=1000)
     # early_stopping = EarlyStopping(tolerance=glv.network_config['patience'], min_delta=0)
     # early_stopping = EarlyStopping(tolerance=100, min_delta=0)
 
@@ -348,7 +348,7 @@ if __name__ == '__main__':
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
 
-        # scheduler.step(train_loss)
+        scheduler.step(train_loss)
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
