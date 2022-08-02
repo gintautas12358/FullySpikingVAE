@@ -4,7 +4,8 @@ import numpy as np
 from utilities import yield_imgs, delete_on_condition
 
 
-path = "../resized_imgs"
+# path = "../resized_imgs"
+path = "../maxpooled"
 res = 256
 size = 100
 
