@@ -96,6 +96,9 @@ def train(network, trainloader, opti, epoch):
         writer.add_images('Train/running_input_img', (real_img+1)/2, batch_count + batch_idx)
         writer.add_images('Train/running_recons_img', (x_recon+1)/2, batch_count + batch_idx)
 
+        if batch_count + batch_idx == 0:
+            writer.add_graph(network, spike_input)
+
         if batch_idx == len(trainloader)-1:
             os.makedirs(f'checkpoint/{args.name}/imgs/train/', exist_ok=True)
             torchvision.utils.save_image((real_img+1)/2, f'checkpoint/{args.name}/imgs/train/epoch{epoch}_input.png')
