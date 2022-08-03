@@ -51,6 +51,14 @@ def compute_autoencoder_frechet_distance(gen, dataset_name, num_gen=5000, batch_
         in_channels = 3
         latent_dim = 128
         feat_model = ann_ae.AE(in_channels, latent_dim).to(device)
+    elif dataset_name.lower() == 'usb_events':
+        in_channels = 3
+        latent_dim = 128
+        feat_model = ann_ae.AE(in_channels, latent_dim).to(device)
+    elif dataset_name.lower() == 'hole':
+        in_channels = 1
+        latent_dim = 32
+        feat_model = ann_ae.AE(in_channels, latent_dim).to(device)
     else:
         raise ValueError()
 

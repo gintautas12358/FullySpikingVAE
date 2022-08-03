@@ -224,6 +224,8 @@ def calc_autoencoder_frechet_distance(network, epoch):
         dataset = 'cifar10'
     elif glv.network_config['dataset'] == "usb_events":
         dataset = 'usb_events'
+    elif glv.network_config['dataset'] == "hole":
+        dataset = 'hole'
     else:
         raise ValueError()
 
@@ -365,9 +367,9 @@ if __name__ == '__main__':
         #     break
 
         # calc_inception_score(net, e)
-        # calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])
-        # calc_autoencoder_frechet_distance(net, e)
-        # calc_clean_fid(net, e)
+        calc_inception_score(net, e, batch_size=glv.network_config['batch_size'])
+        calc_autoencoder_frechet_distance(net, e)
+        calc_clean_fid(net, e)
         
     writer.close()
 
