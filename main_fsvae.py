@@ -333,10 +333,17 @@ if __name__ == '__main__':
         checkpoint_path = args.checkpoint
         checkpoint = torch.load(checkpoint_path)
         net.load_state_dict(checkpoint)    
-    optimizer = torch.optim.AdamW(net.parameters(), 
+    # optimizer = torch.optim.AdamW(net.parameters(), 
+    #                             lr=glv.network_config['lr'], 
+    #                             betas=(0.9, 0.999), 
+    #                             weight_decay=glv.network_config['weight_decay'])
+
+    optimizer = torch.optim.SGD(net.parameters(), 
                                 lr=glv.network_config['lr'], 
-                                betas=(0.9, 0.999), 
-                                weight_decay=glv.network_config['weight_decay'])
+                                weight_decay=glv.network_config['weight_decay'],
+                                momentum=0.9)
+
+
 
     best_loss = 1e8
 
