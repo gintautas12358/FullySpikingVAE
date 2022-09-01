@@ -62,6 +62,9 @@ def train(network, trainloader, opti, epoch):
 
     batch_count = epoch * len(trainloader)
 
+    exp_average_loss = 2
+    beta = 0.1
+
     for batch_idx, (real_img, labels) in enumerate(trainloader):   
         opti.zero_grad()
         real_img = real_img.to(init_device, non_blocking=True)
@@ -90,9 +93,13 @@ def train(network, trainloader, opti, epoch):
         mean_p_z = (p_z.mean(0).detach().cpu() + batch_idx * mean_p_z) / (batch_idx+1) # (C,k,T)
         mean_sampled_z = (sampled_z.mean(0).detach().cpu() + batch_idx * mean_sampled_z) / (batch_idx+1) # (C,T)
 
+        
+        exp_average_loss = beta * loss_meter.avg + (1 - beta) * exp_average_loss
+
         print(f'Train[{epoch}/{max_epoch}] [{batch_idx}/{len(trainloader)}] Loss: {loss_meter.avg}, RECONS: {recons_meter.avg}, DISTANCE: {dist_meter.avg}')
         writer.add_scalar('Train/running_learning_rate', opti.param_groups[0]['lr'], batch_count + batch_idx)
         writer.add_scalar('Train/running_loss', loss_meter.avg, batch_count + batch_idx)
+        writer.add_scalar('Train/running_loss_average', exp_average_loss, batch_count + batch_idx)
         writer.add_images('Train/running_input_img', (real_img+1)/2, batch_count + batch_idx)
         writer.add_images('Train/running_recons_img', (x_recon+1)/2, batch_count + batch_idx)
 
@@ -347,9 +354,11 @@ if __name__ == '__main__':
 
     best_loss = 1e8
 
-    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10000)
+    # scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10000)
     # early_stopping = EarlyStopping(tolerance=glv.network_config['patience'], min_delta=0)
     # early_stopping = EarlyStopping(tolerance=100, min_delta=0)
+
+    
 
     for e in range(glv.network_config['epochs']):
         
@@ -360,7 +369,8 @@ if __name__ == '__main__':
         train_loss = train(net, train_loader, optimizer, e)
         test_loss = test(net, test_loader, e)
 
-        scheduler.step(train_loss)
+        
+        # scheduler.step(train_loss)
 
         torch.save(net.state_dict(), f'checkpoint/{args.name}/checkpoint.pth')
         if test_loss < best_loss:
