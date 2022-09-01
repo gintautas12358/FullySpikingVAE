@@ -235,10 +235,10 @@ def load_hole(data_path):
 
     trainloader = torch.utils.data.DataLoader(test_dataset, 
                                             batch_size=batch_size, 
-                                            shuffle=True, num_workers=8, pin_memory=True, drop_last=True)
+                                            shuffle=True, num_workers=8, pin_memory=True, drop_last=False)
 
     testloader = torch.utils.data.DataLoader(test_dataset, 
                                             batch_size=batch_size, 
-                                            shuffle=False, num_workers=8, pin_memory=True, drop_last=True)
+                                            shuffle=False, num_workers=8, pin_memory=True, drop_last=False)
 
     return trainloader, testloader
