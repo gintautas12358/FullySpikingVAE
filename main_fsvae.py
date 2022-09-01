@@ -354,7 +354,7 @@ if __name__ == '__main__':
 
     best_loss = 1e8
 
-    # scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10000)
+    scheduler = ReduceLROnPlateau(optimizer, 'min', patience=10000)
     # early_stopping = EarlyStopping(tolerance=glv.network_config['patience'], min_delta=0)
     # early_stopping = EarlyStopping(tolerance=100, min_delta=0)
 
