@@ -211,7 +211,7 @@ def load_hole(data_path):
         # transforms.CenterCrop(148),
         # transforms.Resize((input_size,input_size)),
         # transforms.RandomAffine([-180, 180], [0.5, 0.5], [0.3, 1.1], fill=127),
-        transforms.RandomAffine(0, translate=[0.5, 0.5], fill=127),
+        transforms.RandomAffine([-180, 180], translate=[0.5, 0.5], fill=127),
         transforms.ToTensor(),
         SetRange
         ])
@@ -225,7 +225,7 @@ def load_hole(data_path):
     # events_path = os.path.join(dataset_path, "small_grey_cropped_event_imgs")
 
 
-    events_path = os.path.join(dataset_path, "resized_imgs")
+    events_path = os.path.join(dataset_path, "maxpooled")
 
     
 
