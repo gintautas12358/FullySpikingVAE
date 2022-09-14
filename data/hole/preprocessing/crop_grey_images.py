@@ -3,10 +3,11 @@ import numpy as np
 import os
 from pathlib import Path
 
-save_path = "../grey_cropped_event_imgs"
-path = "../original_event_imgs"
+# save_path = "../grey_cropped_event_imgs"
+# path = "../original_event_imgs"
+# path = "../grey_cropped_event_imgs"
 
-size = 100
+size = 20
 
 
 def center_crop(img, size):
@@ -27,39 +28,85 @@ def center_crop(img, size):
     return crop_img
 
 
-type_dir_list = os.listdir(path)
+# type_dir_list = os.listdir(path)
 
-print(type_dir_list)
+# print(type_dir_list)
 
-for type in type_dir_list:
-    print(type)
-    type_path = os.path.join(path, type)
-    type_save_path = os.path.join(save_path, type)
+# for type in type_dir_list:
+#     print(type)
+#     type_path = os.path.join(path, type)
+#     type_save_path = os.path.join(save_path, type)
 
-    Path(type_save_path).mkdir(parents=True, exist_ok=True)
+#     Path(type_save_path).mkdir(parents=True, exist_ok=True)
 
-    dir_list = os.listdir(type_path)
+#     dir_list = os.listdir(type_path)
 
-    for f in dir_list:
-        file_path = os.path.join(type_path, f)
-        # print(file_path)
-        img = cv2.imread(file_path)
+#     for f in dir_list:
+#         file_path = os.path.join(type_path, f)
+#         # print(file_path)
+#         img = cv2.imread(file_path)
 
-        # crop_img = img[y:y+size, x:x+size]
-        crop_img = center_crop(img, size)
+#         # crop_img = img[y:y+size, x:x+size]
+#         crop_img = center_crop(img, size)
 
+#         if crop_img.shape[0] < size or crop_img.shape[1] < size:
+#             continue
 
-        # for visibility
-        crop_img = np.where(crop_img == 50, 255, crop_img)
-        if crop_img[0].size == 0 or crop_img[1].size == 0:
-            continue
+#         # for visibility
+#         crop_img = np.where(crop_img == 50, 255, crop_img)
+#         if crop_img[0].size == 0 or crop_img[1].size == 0:
+#             continue
         	
-        crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+#         crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
-        max_value = np.max(crop_img)
-        crop_img = cv2.normalize(crop_img,  crop_img, 0, 255, cv2.NORM_MINMAX)
+#         max_value = np.max(crop_img)
+#         crop_img = cv2.normalize(crop_img,  crop_img, 0, 255, cv2.NORM_MINMAX)
 
-        new_img_path = os.path.join(type_save_path, f)
-        cv2.imwrite(new_img_path, crop_img)
+#         new_img_path = os.path.join(type_save_path, f)
+#         cv2.imwrite(new_img_path, crop_img)
 
-print("Done!\n")
+# print("Done!\n")
+
+
+def crop_grey_img(path, save_path, size):
+    type_dir_list = os.listdir(path)
+
+    print(type_dir_list)
+
+    for type in type_dir_list:
+        print(type)
+        type_path = os.path.join(path, type)
+        type_save_path = os.path.join(save_path, type)
+
+        Path(type_save_path).mkdir(parents=True, exist_ok=True)
+
+        dir_list = os.listdir(type_path)
+
+        for f in dir_list:
+            file_path = os.path.join(type_path, f)
+            # print(file_path)
+            img = cv2.imread(file_path)
+
+            if img is None:
+                continue
+
+            # crop_img = img[y:y+size, x:x+size]
+            crop_img = center_crop(img, size)
+
+            if crop_img.shape[0] < size or crop_img.shape[1] < size:
+                continue
+
+            # for visibility
+            crop_img = np.where(crop_img == 50, 255, crop_img)
+            if crop_img[0].size == 0 or crop_img[1].size == 0:
+                continue
+                
+            crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+
+            max_value = np.max(crop_img)
+            crop_img = cv2.normalize(crop_img,  crop_img, 0, 255, cv2.NORM_MINMAX)
+
+            new_img_path = os.path.join(type_save_path, f)
+            cv2.imwrite(new_img_path, crop_img)
+
+    print("Done!\n")

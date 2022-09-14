@@ -4,13 +4,14 @@ import os
 from pathlib import Path
 from utilities import yield_imgs, delete_on_condition
 
-enable_delete = True
-offset = 3
-# save_path = "../cropped_event_imgs"
-save_path = "../grey_cropped_event_imgs"
+# enable_delete = True
+offset = 50
+# # save_path = "../cropped_event_imgs"
+# save_path = "../grey_cropped_event_imgs"
+save_path = "../preproc"
+box_size = 200
 
-
-def is_out_of_bound(img, offset):
+def is_out_of_bound(img, box_size, offset):
     # positions_y, positions_x, channel = np.where(img != 255)
     positions_y, positions_x, channel = np.where(img != 0)
 
@@ -23,16 +24,20 @@ def is_out_of_bound(img, offset):
 
     is_out = False
     for m in mm:
-        is_out |= 0 >= m - offset or 100 <= m + offset
+        is_out |= 0 >= m - offset or box_size <= m + offset
 
-    if is_out:
-        return True
-
-    return False
+    return is_out
 
 
-type_dir_list = os.listdir(save_path)
-print(type_dir_list)
+# type_dir_list = os.listdir(save_path)
+# print(type_dir_list)
 
-delete_on_condition(save_path, lambda x: is_out_of_bound(x, offset), enable_delete=enable_delete)
+# delete_on_condition(save_path, lambda x: is_out_of_bound(x, box_size, offset), enable_delete=enable_delete)
+
+def del_only_out_of_bound(save_path, box_size, offset):
+    type_dir_list = os.listdir(save_path)
+    print(type_dir_list)
+
+    delete_on_condition(save_path, lambda x: is_out_of_bound(x, box_size, offset), enable_delete=True)
     
+# del_only_out_of_bound(save_path, box_size, offset)

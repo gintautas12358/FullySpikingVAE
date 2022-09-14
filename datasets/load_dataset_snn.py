@@ -225,7 +225,7 @@ def load_hole(data_path):
     # events_path = os.path.join(dataset_path, "small_grey_cropped_event_imgs")
 
 
-    events_path = os.path.join(dataset_path, "dilated")
+    events_path = os.path.join(dataset_path, "preproc")
 
     
 

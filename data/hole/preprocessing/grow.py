@@ -5,7 +5,9 @@ from utilities import yield_imgs, delete_on_condition
 
 # path = "../small_grey_cropped_event_imgs"
 # path = "../resized_imgs"
-path = "../maxpooled"
+# path = "../maxpooled"
+path = "../dilated"
+
 
 
 size = 5
