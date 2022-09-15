@@ -1,10 +1,10 @@
 import os
 
 file_name = "data_info.txt"
-path = "small_grey_cropped_event_imgs"
+# path = "small_grey_cropped_event_imgs"
 # path = "grey_cropped_event_imgs"
 # path = "cropped_event_imgs"
-# path = "resized_imgs"
+path = "preproc"
 
 splits = {
     "train": 0.8,
