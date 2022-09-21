@@ -7,7 +7,7 @@ def extract_int(s):
     x = re.findall('[0-9]+', s)
     return int(x[0])
 
-runs_list = os.listdir()
+runs_list = os.listdir(".")
 exclude = 'reduce_imgs.py'
 
 print(runs_list)
