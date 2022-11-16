@@ -1,0 +1,86 @@
+Bootstrap: docker
+From: ubuntu:20.04
+
+%setup
+    # touch /file1
+    # touch ${SINGULARITY_ROOTFS}/file2
+
+%files
+    # /file1
+    # /file1 /opt
+
+%environment
+    # export LISTEN_PORT=12345
+    # export LC_ALL=C
+    # ENV TZ=Europe/Berline
+    # export DEBIAN_FRONTEND=noninteractive 
+    # export TZ=TZ=Europe/Minsk
+    
+
+
+%post
+    export DEBIAN_FRONTEND=noninteractive 
+    export TZ=TZ=Europe/Berlin
+
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
+    echo $TZ > /etc/timezone
+    apt-get update 
+
+    apt-get install -y build-essential \
+    wget \
+    git \
+    unzip \
+    python3-setuptools \
+    curl 
+
+    ##########################
+    # pip
+    ##########################
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "install-pip3-ubuntu.py"
+    python3 install-pip3-ubuntu.py
+
+
+    ##########################
+    # repo
+    ##########################
+    git clone https://github.com/gintautas12358/FullySpikingVAE.git
+
+    apt-get update -y
+    apt-get install -y python3-pycuda
+
+    # instead of pip install -r FullySpikingVAE/requirements.txt
+    pip install torch==1.8.1
+    pip install torchvision==0.9.1
+    pip install tensorboard pyyaml tqdm matplotlib scipy clean-fid pandas
+    pip install scikit-image
+    
+    python3 FullySpikingVAE/init_fid_stats.py
+    echo "Finished"
+
+%runscript
+    echo "Container was run on $(date)"
+    echo "Arguments received: $*"
+    exec cat "$0"
+    exec echo .
+
+    cd FullySpikingVAE
+    python3 main_fsvae exp_name -config NetworkConfigs/events.yaml
+
+%startscript
+    # nc -lp $LISTEN_PORT
+
+%test
+    # grep -q NAME=\"Ubuntu\" /etc/os-release
+    # if [ $? -eq 0 ]; then
+    #     echo "Container base is Ubuntu as expected."
+    # else
+    #     echo "Container base is not Ubuntu."
+    # fi
+
+%labels
+    Author gintautas palinauskas
+    Version v0.0.1
+
+%help
+    This is a demo container used to illustrate a def file that uses all
+    supported sections.
